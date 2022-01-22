@@ -6,8 +6,8 @@ NEXTAUTH_URL=http://app.localhost:3000
 ## PRODUCTION & DEVELOPMENT VARIABLES
 
 # MySQL database URL for Prisma
-DATABASE_URL="mysql://root@127.0.0.1:3309/platforms"
-SHADOW_DATABASE_URL="mysql://root@127.0.0.1:3310/platforms"
+DATABASE_URL="mysql://root:a7mSEUdKQvLoTrLlUt4a@containers-us-west-20.railway.app:5679/railway"
+SHADOW_DATABASE_URL="mysql://root:a7mSEUdKQvLoTrLlUt4a@containers-us-west-20.railway.app:5679/railway"
 
 # Twitter OAuth
 TWITTER_ID=
@@ -15,8 +15,8 @@ TWITTER_SECRET=
 TWITTER_AUTH_TOKEN=
 
 # Secret key (generate one here: https://generate-secret.vercel.app/32)
-SECRET=
+SECRET=7be169e96e2fc974833cee0cbd54ccdb
 
-AUTH_BEARER_TOKEN=
-VERCEL_PROJECT_ID=
+AUTH_BEARER_TOKEN=z9IaVjxQomRbS2QAgIG2ch6n
+VERCEL_PROJECT_ID=prj_C8aXgQaZCFxoIe0XT9a2UoZkTKBj
 VERCEL_TEAM_ID=
