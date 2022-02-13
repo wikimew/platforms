@@ -1,5 +1,5 @@
 import Layout from "@/components/app/Layout";
-import useSWR from "swr";
+import useSWR, { mutate } from "swr";
 import { useDebounce } from "use-debounce";
 import { useState, useEffect } from "react";
 import TextareaAutosize from "react-textarea-autosize";
@@ -15,10 +15,11 @@ export default function Post() {
   const postId = id;
 
   const { data: post, isValidating } = useSWR(
-    `/api/get-post-data?postId=${postId}`,
+    router.isReady && `/api/post?postId=${postId}`,
     fetcher,
     {
       revalidateOnFocus: false,
+      dedupingInterval: 1000,
       onError: () => {
         router.push("/");
       },
@@ -82,8 +83,11 @@ export default function Post() {
 
   async function saveChanges(data) {
     setSavedState("Saving changes...");
-    const response = await fetch("/api/save-post", {
-      method: "POST",
+    const response = await fetch("/api/post", {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+      },
       body: JSON.stringify({
         id: postId,
         title: data.title,
@@ -108,14 +112,28 @@ export default function Post() {
     }
   }
 
-  const publish = async (postId) => {
+  const publish = async () => {
     setPublishing(true);
-    await saveChanges(data);
-    const response = await fetch(`/api/publish-post?postId=${postId}`, {
-      method: "POST",
+    const response = await fetch(`/api/post`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        id: postId,
+        title: data.title,
+        description: data.description,
+        content: data.content,
+        published: true,
+        subdomain: post.site.subdomain,
+        customDomain: post.site.customDomain,
+        slug: post.slug,
+      }),
     });
-    await response.json();
-    router.push(`https://${post.site.subdomain}.vercel.pub/${post.slug}`);
+    if (response.ok) {
+      mutate(`/api/post?postId=${postId}`);
+      router.push(`https://${post.site.subdomain}.vercel.pub/${post.slug}`);
+    }
   };
 
   if (isValidating)
@@ -199,7 +217,7 @@ Ordered lists look like:
             </div>
             <button
               onClick={async () => {
-                await publish(postId);
+                await publish();
               }}
               title={
                 disabled
